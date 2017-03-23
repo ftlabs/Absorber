@@ -13,7 +13,7 @@ module.exports = function(feedURL){
 			debug(feed);
 
 			const P = feed.channel[0].item.map(item => {
-
+				debug(item);
 				return extract( item['guid'][0]._ )
 					.then(itemUUID => {
 						debug(itemUUID);
@@ -21,13 +21,16 @@ module.exports = function(feedURL){
 							return false;
 						}
 
+						debug('\n\n\n', item, '\n\n\n');
+						debug(item.link[0].split('?')[0]);
+						
 						const audioURL = item.link[0];
 						const metadata = {
 							uuid : itemUUID,
 							originalURL : audioURL.split('?')[0],
 							title : item.title[0],
 							description : item.description[0],
-							published : item.pubDate[0]
+							published :  item.pubDate !== undefined ? item.pubDate[0] : item.pubdate[0]
 						};
 
 						return {
@@ -41,10 +44,7 @@ module.exports = function(feedURL){
 
 			});
 
-			return Promise.all(P).then(p => {
-				debug(p);
-				return p;
-			});
+			return Promise.all(P)
 
 		})
 		.catch(err => {

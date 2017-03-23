@@ -27,12 +27,11 @@ function getDataFromURL(feedInfo){
 	if(feedInfo.type === 'itunes'){
 		getItems = extractItemsFromiTunesRSS;
 	} else {
-		getItems = extractItemsFromRSS
+		getItems = extractItemsFromRSS;
 	}
 
 	getItems(feedInfo.url)
 		.then(itemInformation => {
-			debug(itemInformation);
 			itemInformation.forEach(datum => {
 
 				debug(datum.metadata);
