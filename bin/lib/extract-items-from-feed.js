@@ -33,6 +33,10 @@ module.exports = function(feedURL){
 							return false;
 						}
 
+						if(item.pubDate !== undefined && item.pubdate === undefined){
+							item.pubdate = item.pubDate;
+						}
+
 						return checkItemHasRequiredFields(item, process.env.REQUIRED_FEED_ITEMS.split(','))
 							.then(item => removeUnwantedFields(item, ['title', 'link', 'description', 'pubdate', 'guid']))
 							.then(item => {
