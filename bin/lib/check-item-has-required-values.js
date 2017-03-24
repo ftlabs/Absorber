@@ -1,13 +1,12 @@
 const debug = require('debug')('bin:lib:check-item-has-required-values');
-const requiredItemValues = ['title', 'link', 'description', 'pubdate', 'guid'];
 
-module.exports = function(item){
+module.exports = function(item, requiredItems){
 
 	return new Promise( (resolve, reject) => {
 
 		const missingRequiredItemValues = [];
 
-		requiredItemValues.forEach(key => {
+		requiredItems.forEach(key => {
 			
 			if(item[key] === undefined){
 				missingRequiredItemValues.push(key);
