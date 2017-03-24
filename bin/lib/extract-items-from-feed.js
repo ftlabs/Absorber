@@ -43,13 +43,14 @@ module.exports = function(feedURL){
 									.then(function(){
 
 										debug(itemUUID, metadata);
+										debug('AHTEM', item);
 
 										const tableEntry = {
 											title : unpack(item.title),
 											link : unpack(item.link),
 											description : unpack(item.description),
 											pubdate : item.pubDate !== undefined ? unpack(item.pubDate) : unpack(item.pubdate),
-											guid : unpack(item.guid),
+											guid : unpack(item.guid)['_'],
 											duration : unpack(metadata.duration),
 											uuid : unpack(metadata.uuid),
 											format : unpack(metadata.format)
