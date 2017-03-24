@@ -15,14 +15,15 @@ module.exports = function(metadata){
 				missingRequiredMetadataValues.push(key);
 			}
 
-			if(missingRequiredMetadataValues.length > 0){
-				reject(`Metadata is missing the required values '${missingRequiredMetadataValues.join(', ')}'.`);
-			} else {
-				debug(`METADATA HAS REQUIRED FIELDS`);
-				resolve(metadata);
-			}
 		
 		});
+		
+		if(missingRequiredMetadataValues.length > 0){
+			reject(`Metadata is missing the required values '${missingRequiredMetadataValues.join(', ')}'.`);
+		} else {
+			debug(`METADATA HAS REQUIRED FIELDS`);
+			resolve(metadata);
+		}
 
 	});
 

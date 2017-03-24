@@ -8,19 +8,19 @@ module.exports = function(item){
 		const missingRequiredItemValues = [];
 
 		requiredItemValues.forEach(key => {
-
+			
 			if(item[key] === undefined){
 				missingRequiredItemValues.push(key);
 			}
 
-			if(missingRequiredItemValues.length > 0){
-				reject(`Item is missing the required values '${missingRequiredItemValues.join(', ')}'.`);
-			} else {
-				debug(`ITEM HAS REQUIRED FIELDS`);
-				resolve(item);
-			}
-		
 		});
+		
+		if(missingRequiredItemValues.length > 0){
+			reject(`Item is missing the required values '${missingRequiredItemValues.join(', ')}'.`);
+		} else {
+			debug(`ITEM HAS REQUIRED FIELDS`);
+			resolve(item);
+		}
 
 	});
 

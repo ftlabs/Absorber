@@ -6,6 +6,7 @@ const parseRSSFeed = require('./parse-rss-feed');
 const separateQueryParams = require('./separate-query-parameters');
 const checkItemHasRequiredFields = require('./check-item-has-required-values');
 const checkItemHasRequiredMetadata = require('./check-metadata-has-required-values');
+const removeUnwantedFields = require('./remove-unwanted-fields');
 
 function unpack(value){
 
@@ -34,16 +35,17 @@ module.exports = function(feedURL){
 						}
 
 						return checkItemHasRequiredFields(item)
-							.then(function(){
+							.then(item => removeUnwantedFields(item, ['title', 'link', 'description', 'pubdate', 'guid']))
+							.then(item => {
 
 								const audioURL = item.enclosure !== undefined ? item.enclosure[0]['$'].url : item.link[0];
 								const metadata = separateQueryParams(audioURL);
 								
 								return checkItemHasRequiredMetadata(metadata)
-									.then(function(){
+									.then(metadata => removeUnwantedFields(metadata, ['duration', 'narrator-id', 'uuid', 'is-human', 'format']))
+									.then(metadata => {
 
 										debug(itemUUID, metadata);
-										debug('AHTEM', item);
 
 										const tableEntry = {
 											title : unpack(item.title),
