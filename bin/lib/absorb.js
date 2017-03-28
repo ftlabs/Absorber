@@ -87,8 +87,8 @@ function getDataFromURL(feedInfo){
 									if(err){
 										debug(err);
 									}
-
-									if(process.env.ENVIRONMENT === 'production'){
+									debug('METADATA HERE:', metadata, metadata['is-human']);
+									if(process.env.ENVIRONMENT === 'production' && metadata['is-human'] === true ){
 										mail.send({
 											itemUUID: itemUUID,
 											title: item['title'] || 'no title specified',
