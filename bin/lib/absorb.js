@@ -78,12 +78,10 @@ function getDataFromURL(feedInfo){
 							Bucket : process.env.AWS_AUDIO_BUCKET,
 							Key : `${itemUUID}.mp3`
 						}, function (err) { 
-
-							debug( (err && err.code === 'NotFound'), shouldOverwrite(databaseItem, metadata) );
 							
 							if ( (err && err.code === 'NotFound') || shouldOverwrite(databaseItem, metadata) ){
 								// We don't have that audio file, let's grab it
-								debug(`We dont have the audio for ${itemUUID}. Fetching from ${item.link}`);
+								debug(`We dont have the .MP3 for ${itemUUID}. Fetching from ${item.link}`);
 								
 								debug(item);
 
@@ -112,7 +110,6 @@ function getDataFromURL(feedInfo){
 													provider : feedInfo.provider
 												});
 											}
-
 
 											audit({
 												user : "ABSORBER",
