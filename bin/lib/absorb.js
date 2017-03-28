@@ -7,9 +7,8 @@ const audit = require('./audit');
 const database = require('./database');
 const mail = require('./mailer');
 const generateS3PublicURL = require('./get-s3-public-url');
+const extractItemsFromFeed = require('./extract-items-from-feed');
 const convert = require('./convert');
-const extractItemsFromiTunesRSS = require('./extract-items-from-itunes-xml');
-const extractItemsFromRSS = require('./extract-items-from-rss');
 
 const S3 = new AWS.S3();
 
@@ -22,24 +21,16 @@ function getDataFromURL(feedInfo){
 
 	debug(feedInfo);
 
-	let getItems = undefined;
-
-	if(feedInfo.type === 'itunes'){
-		getItems = extractItemsFromiTunesRSS;
-	} else {
-		getItems = extractItemsFromRSS;
-	}
-
-	getItems(feedInfo.url)
+	extractItemsFromFeed(feedInfo.url)
 		.then(itemInformation => {
 			itemInformation.forEach(datum => {
-
-				debug(datum.metadata);
 
 				const item = datum.item;
 				const metadata = datum.metadata;
 				const audioURL = datum.audioURL;
 				const itemUUID = metadata.uuid;
+
+				const tableData = datum.tableEntry;
 
 				metadata.provider = feedInfo.provider;
 				
@@ -48,42 +39,18 @@ function getDataFromURL(feedInfo){
 
 						if(Object.keys(item).length < 1){
 							
-							debug(`Item ${itemUUID} has no meta data in database. Adding...`, metadata);
+							debug(`Item ${itemUUID} has no meta data in database. Adding...`, tableData);
 
-							database.write(metadata, process.env.AWS_METADATA_TABLE)
+							database.write(tableData, process.env.AWS_METADATA_TABLE)
 								.then(function(){
-									debug(`Item ${itemUUID} in DynamoDB`, metadata);
-						
-									database.read({uuid : itemUUID}, process.env.AWS_DATA_TABLE)
-										.then(d => {
-
-											if(d.Item !== undefined){
-												
-												const madeAvailable = d.Item.madeAvailable;
-												const voiced = new Date(metadata['date-voiced']) / 1000;
-												
-												if(voiced - madeAvailable > 0){
-												
-													debug(`Date voiced: ${voiced} Made Available: ${madeAvailable} Turnaround: ${voiced - madeAvailable} seconds`);
-													d.Item.turnaround = voiced - madeAvailable;
-													database.write(d.Item, process.env.AWS_DATA_TABLE)
-												
-												}
-
-											}
-
-
-										})
-										.catch(err => {
-											debug(`An error occurred writing the turnaround time for ${itemUUID}`, err);
-										})
-									;
-
+									debug(`Item ${itemUUID} in DynamoDB`, tableData);
 								})
 								.catch(err => {
 									debug("An error occurred when writing audio meta data to the metadata table.", err, metadata);
 								})
 							;
+						} else {
+							debug(`Database already has metadata for item ${itemUUID}`);
 						}
 
 					})
