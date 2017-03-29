@@ -73,15 +73,15 @@ function getDataFromURL(feedInfo){
 						} else {
 							debug(`Database already has metadata for item ${itemUUID}`);
 						}
-
+					
 						S3.headObject({
 							Bucket : process.env.AWS_AUDIO_BUCKET,
 							Key : `${itemUUID}.mp3`
 						}, function (err) { 
 							
 							if ( (err && err.code === 'NotFound') || shouldOverwrite(databaseItem, metadata) ){
-								// We don't have that audio file, let's grab it
-								debug(`We dont have the .MP3 for ${itemUUID}. Fetching from ${item.link}`);
+								// We don't have that audio file (or we want to overwrite it), so let's grab it.
+								debug(`Writing .mp3 version of ${itemUUID} to S3 from ${item.link}.`)
 								
 								debug(item);
 
@@ -137,7 +137,7 @@ function getDataFromURL(feedInfo){
 						}, function(err){
 
 							if ( (err && err.code === 'NotFound') || shouldOverwrite(databaseItem, metadata) ){
-								debug(`We don't have an OGG version of ${itemUUID}. Creating conversion job now`);
+								debug(`We don't have an OGG version of ${itemUUID}. Creating conversion job now...`);
 
 								if(!convert.check(itemUUID)){
 
@@ -145,7 +145,8 @@ function getDataFromURL(feedInfo){
 									fetch(audioURL)
 										.then(res => {
 											const fsStream = fs.createWriteStream(localDestination);
-											
+											debug(`Writing .mp3 version of ${itemUUID} to ${localDestination} for conversion...`);
+
 											return new Promise((resolve) => {
 
 												fsStream.on('close', function(){
@@ -170,7 +171,9 @@ function getDataFromURL(feedInfo){
 											});
 										})
 										.then(conversionDestination => {
+											
 											debug(`${itemUUID} has been converted to OGG and can be found at ${conversionDestination}`);
+											debug(`Writing ${itemUUID}.ogg to S3`);
 
 											fs.readFile(conversionDestination, (err, data) => {
 
@@ -187,12 +190,12 @@ function getDataFromURL(feedInfo){
 														debug(`${itemUUID}.ogg successfully uploaded to ${process.env.AWS_AUDIO_BUCKET}`);
 														fs.unlink(conversionDestination, err => {
 															if(err){
-																debug(`Unable to delete ${conversionDestination} for file system`, err);
+																debug(`Unable to delete ${conversionDestination} from file system`, err);
 															}
 														});
 														fs.unlink(localDestination, err => {
 															if(err){
-																debug(`Unable to delete ${localDestination} for file system`, err);
+																debug(`Unable to delete ${localDestination} from file system`, err);
 															}
 														});
 
@@ -219,7 +222,7 @@ function getDataFromURL(feedInfo){
 											});
 											fs.unlink(`${tmpPath}/${itemUUID}.ogg`, err => {
 												if(err){
-													debug(`Unable to delete ${tmpPath}/${itemUUID}.ogg for file system`, err);
+													debug(`Unable to delete ${tmpPath}/${itemUUID}.ogg from file system`, err);
 												}
 											});
 										})
@@ -230,9 +233,9 @@ function getDataFromURL(feedInfo){
 								}
 
 							} else if(err){
-								debug(`An error occurred querying the S3 bucket for ${itemUUID}.ogv`, err);
+								debug(`An error occurred querying the S3 bucket for ${itemUUID}.ogg`, err);
 							} else {
-								debug(`The OGV version of ${itemUUID} is already in the S3 bucket`);
+								debug(`The OGG version of ${itemUUID} is already in the S3 bucket`);
 							}
 
 						});
