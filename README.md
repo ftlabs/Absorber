@@ -46,11 +46,6 @@ Example JSON
 			"provider" : "First 3rd Party Provider",
 			"url" : "https://validrssurl.com/feed",
 			"type" : "rss"
-		},
-		{
-			"provider" : "Second 3rd Party Provider",
-			"url" : "https://validitunesxml.com/feed.xml",
-			"type" : "itunes"
 		}
 	]
 }
