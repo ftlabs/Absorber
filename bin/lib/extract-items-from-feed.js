@@ -58,7 +58,8 @@ module.exports = function(feedURL){
 											guid : unpack(item.guid)['_'],
 											duration : unpack(metadata.duration),
 											uuid : unpack(metadata.uuid),
-											format : unpack(metadata.format)
+											format : unpack(metadata.format),
+											enabled : true
 										};
 
 										tableEntry['narrator-id'] = metadata['narrator-id'];

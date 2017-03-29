@@ -50,7 +50,7 @@ function getDataFromURL(feedInfo){
 
 				const tableData = datum.tableEntry;
 
-				metadata.provider = feedInfo.provider;
+				tableData.provider = feedInfo.provider;
 				
 				database.read({ uuid : itemUUID }, process.env.AWS_METADATA_TABLE)
 					.then(databaseItem => {
@@ -248,7 +248,6 @@ function getDataFromURL(feedInfo){
 
 				// Check if we have a copy of the MP3 from our 3rd party partner.
 				// If not, grab it and put it in the S3 bucket
-
 
 			});
 			
