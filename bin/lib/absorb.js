@@ -253,7 +253,7 @@ function getDataFromURL(feedInfo){
 			
 		})
 		.catch(err => {
-			debug(err);
+			debug(`An error occured trying to parse the feed from ${feedInfo.url}:`, '\n\terr:', err);
 		})
 	;
 

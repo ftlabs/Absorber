@@ -81,9 +81,6 @@ module.exports = function(feedURL){
 
 
 							})
-							.catch(err => {
-								debug(err);
-							})
 						;
 
 					})
@@ -98,9 +95,6 @@ module.exports = function(feedURL){
 				})
 			;
 
-		})
-		.catch(err => {
-			debug(err);
 		})
 	;
 
