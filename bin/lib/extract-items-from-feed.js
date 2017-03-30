@@ -38,14 +38,14 @@ module.exports = function(feedURL){
 						}
 
 						return checkItemHasRequiredFields(item, process.env.REQUIRED_FEED_ITEMS.split(','))
-							.then(item => removeUnwantedFields(item, ['title', 'link', 'description', 'pubdate', 'guid']))
+							.then(item => removeUnwantedFields(item, process.env.REQUIRED_FEED_ITEMS.split(',')))
 							.then(item => {
 
 								const audioURL = item.enclosure !== undefined ? item.enclosure[0]['$'].url : item.link[0];
 								const metadata = separateQueryParams(audioURL);
 								
 								return checkItemHasRequiredFields(metadata, process.env.REQUIRED_METADATA_PARAMETERS.split(','))
-									.then(metadata => removeUnwantedFields(metadata, ['duration', 'narrator-id', 'uuid', 'is-human', 'format']))
+									.then(metadata => removeUnwantedFields(metadata, process.env.REQUIRED_METADATA_PARAMETERS.split(',')))
 									.then(metadata => {
 
 										debug(itemUUID, metadata);
