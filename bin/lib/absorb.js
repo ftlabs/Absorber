@@ -19,6 +19,10 @@ let poll = undefined;
 
 function shouldOverwrite(database, metadata){
 
+	if(Object.keys(database).length < 3){
+		return true;
+	}
+
 	if(database === undefined || database['is-human'] === undefined || metadata === undefined || metadata['is-human'] === undefined){
 		return false;
 	}
@@ -60,6 +64,10 @@ function getDataFromURL(feedInfo){
 						if(databaseItem === undefined || shouldOverwrite(databaseItem, metadata)){
 							
 							debug(`Item ${itemUUID} has no metadata in database. Adding...`, tableData);
+
+							if(databaseItem.enabled !== undefined){
+								tableData.enabled = databaseItem.enabled;
+							}
 
 							database.write(tableData, process.env.AWS_METADATA_TABLE)
 								.then(function(){
