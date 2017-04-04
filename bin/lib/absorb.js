@@ -9,6 +9,7 @@ const mail = require('./mailer');
 const generateS3PublicURL = require('./get-s3-public-url');
 const extractItemsFromFeed = require('./extract-items-from-feed');
 const convert = require('./convert');
+const purgeAvailabilityCache = require('./purge-availability-cache-of-item');
 
 const S3 = new AWS.S3();
 
@@ -69,6 +70,12 @@ function getDataFromURL(feedInfo){
 								tableData.enabled = databaseItem.enabled;
 							}
 
+							purgeAvailabilityCache(itemUUID)
+								.catch(err => {
+									debug(err);
+								})
+							;
+
 							database.write(tableData, process.env.AWS_METADATA_TABLE)
 								.then(function(){
 									debug(`Item ${itemUUID} in DynamoDB`, tableData);
@@ -118,6 +125,12 @@ function getDataFromURL(feedInfo){
 													provider : feedInfo.provider
 												});
 											}
+
+											purgeAvailabilityCache(itemUUID)
+												.catch(err => {
+													debug(err);
+												})
+											;
 
 											audit({
 												user : "ABSORBER",
@@ -206,6 +219,12 @@ function getDataFromURL(feedInfo){
 																debug(`Unable to delete ${localDestination} from file system`, err);
 															}
 														});
+
+														purgeAvailabilityCache(itemUUID)
+															.catch(err => {
+																debug(err);
+															})
+														;
 
 														audit({
 															user : 'ABSORBER',
