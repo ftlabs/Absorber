@@ -66,8 +66,8 @@ function getDataFromURL(feedInfo){
 							
 							debug(`Item ${itemUUID} has no metadata in database. Adding...`, tableData);
 
-							if(databaseItem.enabled !== undefined){
-								tableData.enabled = databaseItem.enabled;
+							if(databaseItem !== undefined){
+								tableData.enabled = databaseItem.enabled || true;
 							}
 
 							purgeAvailabilityCache(itemUUID)
