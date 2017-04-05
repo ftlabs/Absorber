@@ -18,7 +18,7 @@ const tmpPath = process.env.TMP_PATH || '/tmp';
 
 let poll = undefined;
 
-function shouldOverwrite(database, metadata){
+function shouldOverwrite(database = {}, metadata = {}){
 
 	if(Object.keys(database).length < 3){
 		return true;
