@@ -48,6 +48,10 @@ function getDataFromURL(feedInfo){
 		.then(itemInformation => {
 			itemInformation.forEach(datum => {
 
+				if(datum === false){
+					return;
+				}
+
 				const item = datum.item;
 				const metadata = datum.metadata;
 				const audioURL = datum.audioURL;

@@ -24,7 +24,7 @@ module.exports = function(feedURL){
 		.then(res => res.text())
 		.then(text => parseRSSFeed(text))
 		.then(feed => {
-			debug(feed);
+
 			const P = feed.channel[0].item.map(item => {
 
 				return extractUUID( item['guid'][0]._ )
@@ -91,6 +91,12 @@ module.exports = function(feedURL){
 							})
 						;
 
+					})
+					.catch(err => {
+						debug(`An error occurred trying to parse an item in the RSS feed ${feedURL}`);
+						debug('The item was:', item);
+						debug('The error was:', err);
+						return false;
 					})
 				;
 				
