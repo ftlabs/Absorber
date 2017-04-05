@@ -172,7 +172,7 @@ function getDataFromURL(feedInfo){
 
 												fsStream.on('close', function(){
 													debug(`${itemUUID}.mp3 has been written to ${localDestination}`);
-													resolve();
+													resolve(localDestination);
 												});
 
 												res.body.pipe(fsStream);

@@ -6,6 +6,7 @@ const parseRSSFeed = require('./parse-rss-feed');
 const separateQueryParams = require('./separate-query-parameters');
 const checkItemHasRequiredFields = require('./check-item-has-required-values');
 const removeUnwantedFields = require('./remove-unwanted-fields');
+const getFileDuration = require('./get-file-duration');
 
 function unpack(value){
 
@@ -65,12 +66,19 @@ module.exports = function(feedURL){
 										tableEntry['narrator-id'] = metadata['narrator-id'];
 										tableEntry['is-human'] = metadata['is-human'];
 
-										return {
-											item,
-											metadata,
-											tableEntry,
-											audioURL
-										};
+										return getFileDuration(audioURL)
+											.then(duration => {
+
+												tableEntry.duration = duration;
+												return {
+													item,
+													metadata,
+													tableEntry,
+													audioURL
+												};
+
+											})
+										;
 
 									})
 									.catch(err => {
