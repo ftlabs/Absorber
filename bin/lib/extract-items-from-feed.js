@@ -65,6 +65,11 @@ module.exports = function(feedURL){
 										tableEntry['narrator-id'] = metadata['narrator-id'];
 										tableEntry['is-human'] = metadata['is-human'];
 
+										if(tableEntry.description === ''){
+											debug(`'description' is blank. Removing from tableData`);
+											delete tableEntry.description;
+										}
+
 										return {
 											item,
 											metadata,

@@ -15,7 +15,7 @@ module.exports = function(item, requiredItems){
 		});
 		
 		if(missingRequiredItemValues.length > 0){
-			reject(`Item is missing the required values '${missingRequiredItemValues.join(', ')}'.`);
+			reject(`Item is missing the required values '${missingRequiredItemValues.join(', ')}'.`, item);
 		} else {
 			debug(`ITEM HAS REQUIRED FIELDS`);
 			resolve(item);

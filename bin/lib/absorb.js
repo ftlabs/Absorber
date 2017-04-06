@@ -18,7 +18,7 @@ const tmpPath = process.env.TMP_PATH || '/tmp';
 
 let poll = undefined;
 
-function shouldOverwrite(database, metadata){
+function shouldOverwrite(database = {}, metadata = {}){
 
 	if(Object.keys(database).length < 3){
 		return true;
@@ -56,7 +56,7 @@ function getDataFromURL(feedInfo){
 				const tableData = datum.tableEntry;
 
 				tableData.provider = feedInfo.provider;
-				
+
 				database.read({ uuid : itemUUID }, process.env.AWS_METADATA_TABLE)
 					.then(databaseItem => {
 						
@@ -81,7 +81,7 @@ function getDataFromURL(feedInfo){
 									debug(`Item ${itemUUID} in DynamoDB`, tableData);
 								})
 								.catch(err => {
-									debug("An error occurred when writing audio meta data to the metadata table.", err, metadata);
+									debug("An error occurred when writing audio meta data to the metadata table.", err, tableData);
 								})
 							;
 
