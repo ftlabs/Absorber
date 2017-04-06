@@ -10,11 +10,13 @@ const generateS3PublicURL = require('./get-s3-public-url');
 const extractItemsFromFeed = require('./extract-items-from-feed');
 const convert = require('./convert');
 const purgeAvailabilityCache = require('./purge-availability-cache-of-item');
+const getDurationOfFile = require('./get-file-duration');
 
 const S3 = new AWS.S3();
 
 const ingestorAdminUrl = process.env.ADMIN_URL || 'no Admin URL specified';
 const tmpPath = process.env.TMP_PATH || '/tmp';
+const durationAllowance = 5; // Number of  seconds the reported duration of a file is allowed to be innaccurate by.
 
 let poll = undefined;
 
@@ -99,6 +101,21 @@ function getDataFromURL(feedInfo){
 								debug(`Writing .mp3 version of ${itemUUID} to S3 from ${item.link}.`)
 								
 								debug(item);
+
+								getDurationOfFile(audioURL)
+									.then(duration => {
+										if(duration - tableData.duration < -durationAllowance || duration - tableData.duration > durationAllowance){
+											debug(`Reported duration of file ${audioURL} is incorrect. Updating database Entry`);
+											tableData.duration = duration;
+											database.write(tableData, process.env.AWS_METADATA_TABLE)
+												.catch(err => {
+													debug(`Failed to overwrite duration of ${itemUUID}`, err);
+												})
+											;
+
+										}
+									})
+								;
 
 								fetch(audioURL)
 									.then(function(res) {
