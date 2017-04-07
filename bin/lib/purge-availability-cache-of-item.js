@@ -12,7 +12,7 @@ module.exports = function(uuid){
 			}
 		})
 		.catch(err => {
-			debug(`An error occurred purging the cache for ${UUID} at ${process.env.FT_AVAILABILITY_SERVICE_URL}`, err);
+			debug(`An error occurred purging the cache for ${uuid} at ${process.env.FT_AVAILABILITY_SERVICE_URL}`, err);
 			throw err;
 		})
 	;
