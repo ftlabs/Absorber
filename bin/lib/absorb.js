@@ -20,7 +20,12 @@ const durationAllowance = 5; // Number of  seconds the reported duration of a fi
 
 let poll = undefined;
 
-function shouldOverwrite(database = {}, metadata = {}){
+function shouldOverwrite(database, metadata){
+
+	if(database === undefined || metadata === undefined){
+		debug(`'database' is ${database}. 'metadata' is ${metadata}`);
+		return false;
+	}
 
 	if(Object.keys(database).length < 3){
 		return true;
