@@ -1,11 +1,10 @@
 const debug = require('debug')('bin:lib:get-file-duration');
 const fs = require('fs');
 const fetch = require('node-fetch');
-const probe = require('node-ffprobe');
 const shortID = require('shortid').generate;
 
 const tmpPath = process.env.TMP_PATH || '/tmp';
-
+const ffprobe = require('node-ffprobe');
 process.env.FFPROBE_PATH = require('ffprobe-static').path;
 
 module.exports = function(audioURL){
@@ -14,7 +13,7 @@ module.exports = function(audioURL){
 	const localDestination = `${tmpPath}/${tmpID}`;
 
 	return fetch(audioURL)
-		.then(res => {
+		.then(res => {	
 			const fsStream = fs.createWriteStream(localDestination);
 			debug(`Writing file ${tmpID} to ${localDestination} for probing...`);
 
@@ -34,7 +33,7 @@ module.exports = function(audioURL){
 			
 			return new Promise( (resolve, reject) => {
 
-					probe(filePath, function(err, data){
+					ffprobe(filePath, function(err, data){
 						if(err){
 							reject(err);
 						} else {
@@ -49,6 +48,11 @@ module.exports = function(audioURL){
 				})
 			;
 
+		})
+		.catch(err => {
+			debug('>>>> FFPROBE ERROR <<<<');
+			debug(err);
+			throw err;
 		})
 	;
 
