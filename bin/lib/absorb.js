@@ -63,6 +63,7 @@ function getDataFromURL(feedInfo){
 				const tableData = datum.tableEntry;
 
 				tableData.provider = feedInfo.provider;
+				tableData['provider_name'] = feedInfo['provider_name'];
 
 				database.read({ uuid : itemUUID }, process.env.AWS_METADATA_TABLE)
 					.then(databaseItem => {
