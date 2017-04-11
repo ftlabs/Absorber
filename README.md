@@ -47,13 +47,16 @@ Example JSON
 {
 	"data" : [
 		{
-			"provider" : "First 3rd Party Provider",
+			"provider" : "third-party",
+			"provider_name" : "First 3rd Party Provider"
 			"url" : "https://validrssurl.com/feed",
 			"type" : "rss"
 		}
 	]
 }
 ```
+
+The `provider` value is the shortname that will be used to identify providers in the DynamoDB tables. The `provider_name` value is how you wish the 3rd party's name to be displayed on client-side applications.
 
 The type can be either `rss` for a standard RSS feed, or `itunes` for and iTunes XML feed. 
 
