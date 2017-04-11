@@ -42,8 +42,8 @@ ${data.ftCopyUrl}
 and the 3rd party copy is at 
 ${data.partnerCopyUrl}.
 
-The Ingestion admin page is
-${data.ingestorAdminUrl}
+The audio management page is
+${data.managementURL}
 `;
 
 	let htmlContent = `

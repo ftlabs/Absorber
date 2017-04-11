@@ -14,7 +14,7 @@ const getDurationOfFile = require('./get-file-duration');
 
 const S3 = new AWS.S3();
 
-const ingestorAdminUrl = process.env.ADMIN_URL || 'no Admin URL specified';
+const managementURL = process.env.ADMIN_URL || 'no Admin URL specified';
 const tmpPath = process.env.TMP_PATH || '/tmp';
 const durationAllowance = 5; // Number of  seconds the reported duration of a file is allowed to be innaccurate by.
 
@@ -144,7 +144,7 @@ function getDataFromURL(feedInfo){
 													title: item['title'] || 'no title specified',
 													ftCopyUrl: generateS3PublicURL(itemUUID),
 													partnerCopyUrl: metadata.originalURL,
-													ingestorAdminUrl: ingestorAdminUrl,
+													managementURL: managementURL,
 													provider : feedInfo.provider
 												});
 											}

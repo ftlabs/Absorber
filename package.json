@@ -1,6 +1,6 @@
 {
   "name": "ftlabs-audio-absorber",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "It absorbs audio from 3rd party partners",
   "main": "index.js",
   "scripts": {
