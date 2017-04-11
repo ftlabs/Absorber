@@ -14,12 +14,16 @@ If no file is found in the S3 bucket, a copy will be retrieved from the source t
 
 Any metadata contained in the RSS for the file (as query parameters on the audio file URL) will be stored in the DynamoDB table.
 
+A file will only ever be overwritten if the existing file was created using an automated voice, and a new human-read version is available. At this point, all existing metadata and audio files will be replaced with the new human version.
+
+An email will be sent to individuals listed in the `ALERT_MAIL_RECIPIENTS` env var for each human-read audio file that is absorbed.
+
 ### Existing items
 If a copy of the audio file already exists in the S3 bucket, or an entry exists in the DynamoDB table, it won't be updated. If a newer file exists, the existing MP3 file and database entry must be deleted for the absorber to add them back again.
 
 ## Running the app
 
-Clone this repo, set your 
+Clone this repo, set your...
 
 ## Environment Variables
 
@@ -60,10 +64,6 @@ The type can be either `rss` for a standard RSS feed, or `itunes` for and iTunes
 #### DELIVERED_MEDIA_FORMAT
 
 - The expected file format of the files described by the RSS feeds
-
-#### AWS_DATA_TABLE
-
-- TBD
 
 #### AWS_AUDIT_TABLE
 
@@ -109,3 +109,17 @@ The type can be either `rss` for a standard RSS feed, or `itunes` for and iTunes
 
 - Boolean value. `true` if you want the stderr/stdout of the FFMPEG jobs logged to the console. 
 
+#### REQUIRED_METADATA_PARAMETERS
+- A comma-separated list of keys that RSS feed item must expose to the absorber to be considered valid.
+
+#### REQUIRED_FEED_ITEMS
+
+- A comma-separated list of keys that RSS feeds must expose to the absorber to be considered valid.
+
+#### FT_AVAILABILITY_SERVICE_URL
+
+- The URL for the [audio-available](https://audio-available.ft.com) service.
+
+#### FT_AVAILABILITY_SERVICE_CACHE_PURGE_KEY
+
+- The key to trigger a cache purge on at the `/purge` endpoint of the availability service when a new item has been absorbed.
