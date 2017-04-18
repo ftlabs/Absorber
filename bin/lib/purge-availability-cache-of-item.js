@@ -3,7 +3,7 @@ const fetch = require('node-fetch');
 
 module.exports = function(uuid){
 
-	return fetch(`${process.env.FT_AVAILABILITY_SERVICE_URL}/purge/${uuid}?purgeToken=${process.env.FT_AVAILABILITY_SERVICE_CACHE_PURGE_KEY}`)
+	return fetch(`${process.env.FT_AVAILABILITY_SERVICE_URL}/check/${uuid}`, { method : 'PURGE' })
 		.then(res => {
 			if(res.ok){
 				return res.json();
