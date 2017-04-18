@@ -14,6 +14,8 @@ If no file is found in the S3 bucket, a copy will be retrieved from the source t
 
 Any metadata contained in the RSS for the file (as query parameters on the audio file URL) will be stored in the DynamoDB table.
 
+After the absorption, a `PURGE` request will be made to the audio availability service to force an update of information at that UUID.
+
 A file will only ever be overwritten if the existing file was created using an automated voice, and a new human-read version is available. At this point, all existing metadata and audio files will be replaced with the new human version.
 
 An email will be sent to individuals listed in the `ALERT_MAIL_RECIPIENTS` env var for each human-read audio file that is absorbed.
@@ -122,7 +124,3 @@ The type can be either `rss` for a standard RSS feed, or `itunes` for and iTunes
 #### FT_AVAILABILITY_SERVICE_URL
 
 - The URL for the [audio-available](https://audio-available.ft.com) service.
-
-#### FT_AVAILABILITY_SERVICE_CACHE_PURGE_KEY
-
-- The key to trigger a cache purge on at the `/purge` endpoint of the availability service when a new item has been absorbed.
