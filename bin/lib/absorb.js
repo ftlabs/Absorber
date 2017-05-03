@@ -305,6 +305,8 @@ function getDataFromURL(feedInfo){
 									})
 								;
 
+							} else {
+								debug(`${itemUUID} at ${audioURL} returned a file of 0 bytes. Absorb ABORTED.`);
 							}
 
 						});
