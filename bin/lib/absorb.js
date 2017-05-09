@@ -65,7 +65,8 @@ function getDataFromURL(feedInfo){
 
 				tableData.provider = feedInfo.provider;
 				tableData['provider_name'] = feedInfo['provider_name'];
-
+				tableData['absorb_time'] = new Date() / 1000 | 0;
+				
 				checkFileHasData(audioURL)
 					.then(function(){
 
