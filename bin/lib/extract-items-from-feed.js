@@ -62,6 +62,7 @@ module.exports = function(feedURL){
 											enabled : true
 										};
 
+										tableEntry['unix-pubdate'] = Date.parse(tableEntry.pubdate) / 1000 | 0;
 										tableEntry['narrator-id'] = metadata['narrator-id'];
 										tableEntry['is-human'] = metadata['is-human'];
 
