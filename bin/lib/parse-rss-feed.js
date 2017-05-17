@@ -1,3 +1,4 @@
+const debug = require('debug')('bin:lib:parse-rss-feed');
 const xml2js = require('xml2js');
 
 module.exports = function(text){
@@ -9,7 +10,13 @@ module.exports = function(text){
 			if(err){
 				reject(err);
 			} else {
-				resolve(result.rss);
+				if(result !== null){
+					resolve(result.rss);
+				} else {
+					debug('Parsing of RSS did not complete as expected. TEXT:', text, 'RESULT:', JSON.stringify(result), 'ERR:', JSON.stringify(err) );
+					reject();	
+				}
+
 			}
 
 		});
