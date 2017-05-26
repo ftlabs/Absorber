@@ -14,23 +14,33 @@ module.exports = function(fileURL){
 
 				let firstChunk = true;
 
-				res.body.on('data', function(data){
-					console.log(data);
+				res.body.on('data', function(chunk){
+
 					if(firstChunk){
-						if(data.length > 0){
+
+						if(chunk.length > 0){
+
+							debug('Data exists for:', fileURL, chunk.length, 'bytes receieved');
 							firstChunk = false;
 							res.body.end();
 							resolve();
-						} else {
-							reject(`There was no data at the URL: '${fileURL}'`);
-						}
-					}
 
+						} else {
+
+							reject(`File at ${fileURL} returned 0 bytes. ABSORB ABORTED.`);
+
+						}
+
+					}
 
 				});
 
 			})
-			
+
+		})
+		.catch(err => {
+			debug(`Error occurred fetching ${fileURL}`, err);
+			throw err;
 		})
 	;
 
