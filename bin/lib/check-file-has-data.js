@@ -3,44 +3,35 @@ const url = require('url');
 const http = require('http');
 const https = require('https');
 
+const fetch = require('node-fetch');
+
 module.exports = function(fileURL){
 
-	const u = url.parse(fileURL);
+	return fetch(fileURL)
+		.then(res => {
 
-	const requestModule = u.protocol === 'https:' ? https : http;
+			return new Promise( (resolve, reject) => {
 
-	const options = {
-		host : u.host,
-		path : u.path,
-		port : u.protocol === 'https:' ? 443 : 80,
-		method: 'GET'
-	};
+				let firstChunk = true;
 
-	return new Promise( (resolve, reject) => {
-
-		const req = requestModule.get(options, function(response){
-				response.on('data', function(chunk){
-					req.abort();
-					if(chunk.length > 0){
-						debug('Data exists for:', fileURL, chunk.length, 'bytes receieved');
-						resolve();
-					} else {
-						reject(`File at ${fileURL} returned 0 bytes. ABSORB ABORTED.`);
+				res.body.on('data', function(data){
+					console.log(data);
+					if(firstChunk){
+						if(data.length > 0){
+							firstChunk = false;
+							res.body.end();
+							resolve();
+						} else {
+							reject(`There was no data at the URL: '${fileURL}'`);
+						}
 					}
 
+
 				});
-			})
-			.on('error', function(err){
-				try {
-					req.abort();
-				} catch(err){
-					debug('REQUEST ABORT FAILED', err);
-				}
-				reject(err);
-			})
-		;
 
-	} );
-
+			})
+			
+		})
+	;
 
 };
