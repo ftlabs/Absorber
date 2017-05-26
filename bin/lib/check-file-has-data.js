@@ -12,25 +12,14 @@ module.exports = function(fileURL){
 
 			return new Promise( (resolve, reject) => {
 
-				let firstChunk = true;
-
 				res.body.on('data', function(chunk){
 
-					if(firstChunk){
-
-						if(chunk.length > 0){
-
-							debug('Data exists for:', fileURL, chunk.length, 'bytes receieved');
-							firstChunk = false;
-							res.body.end();
-							resolve();
-
-						} else {
-
-							reject(`File at ${fileURL} returned 0 bytes. ABSORB ABORTED.`);
-
-						}
-
+					if(chunk.length > 0){
+						debug('Data exists for:', fileURL, chunk.length, 'bytes receieved');
+						res.body.end();
+						resolve();
+					} else {
+						reject(`File at ${fileURL} returned 0 bytes. ABSORB ABORTED.`);
 					}
 
 				});
