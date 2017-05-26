@@ -1,46 +1,32 @@
 const debug = require('debug')('bin:lib:check-file-has-data');
-const url = require('url');
-const http = require('http');
-const https = require('https');
+const fetch = require('node-fetch');
 
 module.exports = function(fileURL){
 
-	const u = url.parse(fileURL);
+	return fetch(fileURL)
+		.then(res => {
 
-	const requestModule = u.protocol === 'https:' ? https : http;
+			return new Promise( (resolve, reject) => {
 
-	const options = {
-		host : u.host,
-		path : u.path,
-		port : u.protocol === 'https:' ? 443 : 80,
-		method: 'GET'
-	};
+				res.body.on('data', function(chunk){
 
-	return new Promise( (resolve, reject) => {
-
-		const req = requestModule.get(options, function(response){
-				response.on('data', function(chunk){
-					req.abort();
 					if(chunk.length > 0){
 						debug('Data exists for:', fileURL, chunk.length, 'bytes receieved');
+						res.body.end();
 						resolve();
 					} else {
 						reject(`File at ${fileURL} returned 0 bytes. ABSORB ABORTED.`);
 					}
 
 				});
-			})
-			.on('error', function(err){
-				try {
-					req.abort();
-				} catch(err){
-					debug('REQUEST ABORT FAILED', err);
-				}
-				reject(err);
-			})
-		;
 
-	} );
+			})
 
+		})
+		.catch(err => {
+			debug(`Error occurred fetching ${fileURL}`, err);
+			throw err;
+		})
+	;
 
 };
