@@ -1,8 +1,4 @@
 const debug = require('debug')('bin:lib:check-file-has-data');
-const url = require('url');
-const http = require('http');
-const https = require('https');
-
 const fetch = require('node-fetch');
 
 module.exports = function(fileURL){
