@@ -66,7 +66,7 @@ function getDataFromURL(feedInfo){
 				tableData.provider = feedInfo.provider;
 				tableData['provider_name'] = feedInfo['provider_name'];
 				tableData['absorb_time'] = new Date() / 1000 | 0;
-				
+
 				checkFileHasData(audioURL)
 					.then(function(){
 
@@ -153,7 +153,7 @@ function getDataFromURL(feedInfo){
 															itemUUID: itemUUID,
 															title: item['title'] || 'no title specified',
 															ftCopyUrl: generateS3PublicURL(itemUUID),
-															partnerCopyUrl: metadata.originalURL,
+															partnerCopyUrl: audioURL,
 															managementURL: managementURL,
 															provider : feedInfo.provider
 														});
