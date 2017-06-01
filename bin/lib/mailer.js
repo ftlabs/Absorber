@@ -71,6 +71,9 @@ and the 3rd party's copy at
 <br>
 <a href="${data.partnerCopyUrl}">${data.partnerCopyUrl}</a>.
 </p>
+<p>
+The audio management page is <a href="${data.managementURL}">here</a>.
+</p>
 `;
 
 	const post_body_data = {
