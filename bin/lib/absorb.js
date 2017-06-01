@@ -147,7 +147,7 @@ function getDataFromURL(feedInfo){
 														debug(err);
 													}
 
-													if(process.env.NODE_ENV === 'production' && metadata['is-human'] === true ){
+													if(process.env.NODE_ENV === 'production' && metadata['is-human'] === 'true' ){
 														debug('Production environment detected. Alerting FT to newly absorbed content.');
 														mail.send({
 															itemUUID: itemUUID,
