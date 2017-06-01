@@ -147,7 +147,7 @@ function getDataFromURL(feedInfo){
 														debug(err);
 													}
 
-													if(process.env.ENVIRONMENT === 'production' && metadata['is-human'] === true ){
+													if(process.env.NODE_ENV === 'production' && metadata['is-human'] === true ){
 														debug('Production environment detected. Alerting FT to newly absorbed content.');
 														mail.send({
 															itemUUID: itemUUID,
@@ -158,7 +158,7 @@ function getDataFromURL(feedInfo){
 															provider : feedInfo.provider
 														});
 													} else {
-														debug(`Did not send email for piece. ENVIRONMENT: ${process.env.ENVIRONMENT} is-human: ${metadata['is-human']}`);
+														debug(`Did not send email for piece. ENVIRONMENT: ${process.env.NODE_ENV} is-human: ${metadata['is-human']}`);
 													}
 
 													if(process.env.NODE_ENV !== 'development'){
