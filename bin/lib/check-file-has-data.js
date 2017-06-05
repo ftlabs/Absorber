@@ -1,7 +1,7 @@
 const debug = require('debug')('bin:lib:check-file-has-data');
 const url = require('url');
-const http = require('http');
-const https = require('https');
+const http = require('follow-redirects').http;
+const https = require('follow-redirects').https;
 
 module.exports = function(fileURL){
 
@@ -15,6 +15,8 @@ module.exports = function(fileURL){
 		port : u.protocol === 'https:' ? 443 : 80,
 		method: 'GET'
 	};
+
+	debug('Checking data exists for', fileURL);
 
 	return new Promise( (resolve, reject) => {
 
