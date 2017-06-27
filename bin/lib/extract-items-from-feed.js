@@ -26,6 +26,8 @@ module.exports = function(feedURL){
 			debug(feed);
 			const P = feed.channel[0].item.map(item => {
 
+				let thisItemUUID;
+
 				return extractUUID( item['guid'][0]._ )
 					.then(itemUUID => {
 
@@ -36,6 +38,8 @@ module.exports = function(feedURL){
 						if(item.pubDate !== undefined && item.pubdate === undefined){
 							item.pubdate = item.pubDate;
 						}
+
+						thisItemUUID = itemUUID;
 
 						return checkItemHasRequiredFields(item, process.env.REQUIRED_FEED_ITEMS.split(','))
 							.then(item => removeUnwantedFields(item, process.env.REQUIRED_FEED_ITEMS.split(',')))
@@ -79,28 +83,26 @@ module.exports = function(feedURL){
 										};
 
 									})
-									.catch(err => {
-										debug(err);
-									})
+
 								;
 
-
-
 							})
-						;
 
+						;
+	
 					})
+					.catch(err => {
+						debug(`An error occurred processing an item ${thisItemUUID} in the feed. Passing over...`, err);
+						return false;
+					})
+
 				;
 				
 			});
 
 			return Promise.all(P)
-				.then(function(p){
-					debug('All done');
-					return p;
-				})
+				.then(items => items.filter(item => item !== false))
 			;
-
 		})
 	;
 
