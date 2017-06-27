@@ -55,7 +55,7 @@ function getDataFromURL(feedInfo){
 	extractItemsFromFeed(feedInfo.url)
 		.then(itemInformation => {
 			itemInformation.forEach(datum => {
-
+				debug(datum);
 				const item = datum.item;
 				const metadata = datum.metadata;
 				const audioURL = datum.audioURL;
