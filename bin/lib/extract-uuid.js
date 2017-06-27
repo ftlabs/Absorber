@@ -13,6 +13,7 @@ module.exports = function(str){
 	debug("UUID:", UUIDString);
 
 	if(!UUIDString || !isUUID.anyNonNil(UUIDString)){
+		debug('INVALID UUID:', UUIDString);
 		return Promise.reject("Not a valid UUID");
 	} else {
 		return Promise.resolve(UUIDString);
