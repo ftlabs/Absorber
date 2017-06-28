@@ -15,7 +15,6 @@ const assert = require('assert');
 	assert(process.env[p], `missing env param: ${p}`);
 });
 
-const recipients           = process.env.MAIL_RECIPIENTS.split(',');
 const from_email_subdomain = process.env.MAIL_FROM_SUBDOMAIN;
 const from_email_prefix    = process.env.MAIL_FROM_PREFIX;
 const from_email_name      = process.env.MAIL_FROM_NAME;
@@ -25,107 +24,7 @@ const mail_post_auth_token = process.env.MAIL_POST_AUTH_TOKEN;
 const from_email_address   = `${from_email_prefix}@${from_email_subdomain}`;
 const defaultSubject       = 'Audio file retrieved from 3rd parties';
 
-function sendMessage(data){
-	const subject = `Audio file retrieved from 3rd parties: ${data.title}, ${data.itemUUID}`;
-	const plainTextContent = `
-This email is being sent to ${recipients.join(", ")}.
-
-The Business Development team (Kayode Josiah) is running an experiment with 3rd parties providing human-voiced audio files of FT articles (chosen by FirstFT, Andrew Jack). 
-
-A new audio file has been retrieved from the 3rd party (${data.provider}).
-for article ${data.itemUUID},
-title: ${data.title}.
-
-You can find the FT copy at 
-${data.ftCopyUrl}
-
-and the 3rd party copy is at 
-${data.partnerCopyUrl}.
-
-The audio management page is
-${data.managementURL}
-`;
-
-	let htmlContent = `
-<p>
-This email is being sent to ${recipients.join(", ")}.
-</p>
-<p>
-The Business Development team (Kayode Josiah) is running an experiment with 3rd parties providing human-voiced audio files of FT articles (chosen by FirstFT, Andrew Jack). 
-</p>
-<p>
-A new audio file has been retrieved from the 3rd party (${data.provider}).
-</p>
-<p>
-for article ${data.itemUUID},
-<br>
-title: ${data.title}.
-</p>
-<p>
-You can find the FT copy at 
-<br>
-<a href="${data.ftCopyUrl}">${data.ftCopyUrl}</a>.
-</p>
-<p>
-and the 3rd party's copy at 
-<br>
-<a href="${data.partnerCopyUrl}">${data.partnerCopyUrl}</a>.
-</p>
-<p>
-The audio management page is <a href="${data.managementURL}">here</a>.
-</p>
-`;
-
-	const post_body_data = {
-		transmissionHeader: {
-			description: "alerting that 3rd parties have generated a human-voiced audio file for another article",
-		    metadata: {
-		        audioArticleIngestionUuid: data.itemUUID
-		    },
-		},
-		to: {
-		    address: recipients
-		},
-		from: {
-		    address: from_email_address,
-		    name:    from_email_name
-		},
-		subject:          subject,
-		htmlContent:      htmlContent,
-		plainTextContent: plainTextContent
-	};
-
-	fetch(mail_post_url, {
-		method       : 'POST', 
-		body         :  JSON.stringify(post_body_data),
-		headers      : {
-  			'Content-Type'  : 'application/json',
-  			'Authorization' : mail_post_auth_token
-  		}
-	})
-		.then(res => {
-
-			if(res.status !== 200){
-				throw [
-					`An error occurred sending email for data=${JSON.stringify(data)},\nres=${JSON.stringify(res)}`, 
-					res
-					];
-			} else {
-				debug(`Email sent, for data=${JSON.stringify(data)}`);
-			}
-		})
-		.catch(errDetails => {
-			debug(errDetails[0]);
-			errDetails[1].json()
-				.then(json => {
-					debug(`res.json()=${json}`);
-				})
-			;
-		})
-	;
-}
-
-function sendCustomMessageToSpecifiedRecipients(recipients = [], subject, plainText, htmlContent){
+function sendCustomMessageToSpecifiedRecipients(recipients = [], subject, plainText, htmlContent, ingestionUUID = 'custom-message'){
 
 	if(!recipients || recipients.length < 1){
 		return Promise.reject('No recipients passed. Message not sent');
@@ -135,7 +34,7 @@ function sendCustomMessageToSpecifiedRecipients(recipients = [], subject, plainT
 		transmissionHeader: {
 			description: 'Custom FT Labs Absorber email',
 		    metadata: {
-		        audioArticleIngestionUuid: 'custom-message'
+		        audioArticleIngestionUuid: ingestionUUID
 		    },
 		},
 		to: {

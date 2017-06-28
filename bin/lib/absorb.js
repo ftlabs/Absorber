@@ -150,16 +150,20 @@ function getDataFromURL(feedInfo){
 														debug(err);
 													}
 
+													/*{
+														itemUUID: itemUUID,
+														title: item['title'] || 'no title specified',
+														ftCopyUrl: generateS3PublicURL(itemUUID),
+														partnerCopyUrl: audioURL,
+														managementURL: managementURL,
+														provider : feedInfo.provider
+													}*/
+
 													if(process.env.NODE_ENV === 'production' && metadata['is-human'] === 'true' ){
 														debug('Production environment detected. Alerting FT to newly absorbed content.');
-														mail.send({
-															itemUUID: itemUUID,
-															title: item['title'] || 'no title specified',
-															ftCopyUrl: generateS3PublicURL(itemUUID),
-															partnerCopyUrl: audioURL,
-															managementURL: managementURL,
-															provider : feedInfo.provider
-														});
+														mail.sendCustomMessage(
+															process.env.MAIL_RECIPIENTS.split(','),
+															);
 													} else {
 														debug(`Did not send email for piece. ENVIRONMENT: ${process.env.NODE_ENV} is-human: ${metadata['is-human']}`);
 													}
