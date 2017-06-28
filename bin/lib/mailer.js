@@ -125,6 +125,58 @@ The audio management page is <a href="${data.managementURL}">here</a>.
 	;
 }
 
+function sendCustomMessageToSpecifiedRecipients(recipients = [], subject, plainText, htmlContent, description, metadata){
+
+	if(!recipients || recipients.length < 1){
+		return Promise.reject('No recipients passed. Message not sent');
+	}
+
+	const post_body_data = {
+		transmissionHeader: {
+			description: description || 'Custom automated message from FT Labs Audio Absorber',
+		    metadata: metadata || {},
+		},
+		to: {
+		    address: recipients
+		},
+		from: {
+		    address: from_email_address,
+		    name:    from_email_name
+		},
+		subject:          subject,
+		htmlContent:      htmlContent,
+		plainTextContent: plainText
+	};
+
+	return fetch(mail_post_url, {
+			method       : 'POST', 
+			body         :  JSON.stringify(post_body_data),
+			headers      : {
+				'Content-Type'  : 'application/json',
+				'Authorization' : mail_post_auth_token
+			}
+		})
+		.then(res => {
+			if(!res.ok){
+				throw res;
+			} else {
+				return res;
+			}
+		})
+		.then(res => res.text())
+		.then(response => debug(response))
+		.then(function(){
+			return true;
+		})
+		.catch(err => {
+			debug('An error occurred sending a custom email', err);
+			return false;
+		})
+	;
+
+}
+
 module.exports = {
-	send : sendMessage
+	send : sendMessage,
+	sendCustomMessage : sendCustomMessageToSpecifiedRecipients
 };

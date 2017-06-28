@@ -12,6 +12,7 @@ const convert = require('./convert');
 const purgeAvailabilityCache = require('./purge-availability-cache-of-item');
 const checkFileHasData = require('./check-file-has-data');
 const getDurationOfFile = require('./get-file-duration');
+const problems = require('./problem-items');
 
 const S3 = new AWS.S3();
 
@@ -20,6 +21,7 @@ const tmpPath = process.env.TMP_PATH || '/tmp';
 const durationAllowance = 5; // Number of  seconds the reported duration of a file is allowed to be innaccurate by.
 
 let poll = undefined;
+let problemReportSent = false;
 
 function shouldOverwrite(database, metadata){
 
@@ -49,7 +51,8 @@ function shouldOverwrite(database, metadata){
 }
 
 function getDataFromURL(feedInfo){
-
+	
+	debug('Known problems:', problems.list());
 	debug(feedInfo);
 
 	extractItemsFromFeed(feedInfo.url)
@@ -322,6 +325,19 @@ function getDataFromURL(feedInfo){
 			debug(`An error occured trying to parse the feed from ${feedInfo.url}:`, '\n\terr:', err);
 		})
 	;
+
+	const currentTime = new Date();
+
+	// if(currentTime.getHours() === 13 && currentTime.getMinutes() < 10 && problemReportSent === false && problems.list().length > 0){
+	if(!problemReportSent && problems.list().length > 0){
+		problems.sendReport()
+			.then(sentSuccesfully => {
+				if(sentSuccesfully){
+					problemReportSent = true;
+				}
+			})
+		;
+	}
 
 }
 
