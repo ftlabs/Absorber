@@ -125,7 +125,7 @@ The audio management page is <a href="${data.managementURL}">here</a>.
 	;
 }
 
-function sendCustomMessageToSpecifiedRecipients(recipients = [], subject, plainText, htmlContent, description, metadata){
+function sendCustomMessageToSpecifiedRecipients(recipients = [], subject, plainText, htmlContent){
 
 	if(!recipients || recipients.length < 1){
 		return Promise.reject('No recipients passed. Message not sent');
@@ -133,8 +133,10 @@ function sendCustomMessageToSpecifiedRecipients(recipients = [], subject, plainT
 
 	const post_body_data = {
 		transmissionHeader: {
-			description: description || 'Custom automated message from FT Labs Audio Absorber',
-		    metadata: metadata || {},
+			description: 'Custom FT Labs Absorber email',
+		    metadata: {
+		        audioArticleIngestionUuid: 'custom-message'
+		    },
 		},
 		to: {
 		    address: recipients
@@ -144,8 +146,8 @@ function sendCustomMessageToSpecifiedRecipients(recipients = [], subject, plainT
 		    name:    from_email_name
 		},
 		subject:          subject,
-		htmlContent:      htmlContent,
-		plainTextContent: plainText
+		htmlContent:      plainText,
+		plainTextContent: htmlContent
 	};
 
 	return fetch(mail_post_url, {

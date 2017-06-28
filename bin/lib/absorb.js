@@ -327,9 +327,10 @@ function getDataFromURL(feedInfo){
 	;
 
 	const currentTime = new Date();
-
-	// if(currentTime.getHours() === 13 && currentTime.getMinutes() < 10 && problemReportSent === false && problems.list().length > 0){
-	if(!problemReportSent && problems.list().length > 0){
+	
+	// If it's between 13:00 and 13:10, and we have not sent a problem report
+	// and we have problems to report, do so.
+	if(currentTime.getHours() === 13 && currentTime.getMinutes() < 10 && problemReportSent === false && problems.list().length > 0){
 		problems.sendReport()
 			.then(sentSuccesfully => {
 				if(sentSuccesfully){

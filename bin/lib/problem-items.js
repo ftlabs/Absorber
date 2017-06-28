@@ -38,7 +38,14 @@ function sendAReportToInterestedPartiesOfIssues(){
 		listedIssues += '\n' + key + ': ' + itemsWithIssues[key];	
 	});
 
-	return mailer.sendCustomMessage(recipients, 'Issues with 3rd party audio acquisition', intro + listedIssues + outro, 'lol', {a : 0})
+	const combinedMessage = intro + listedIssues + outro;
+
+	return mailer.sendCustomMessage(
+		recipients,
+		'Issues with 3rd party audio acquisition', 
+		combinedMessage, 
+		combinedMessage
+	)
 		.then(wasOK => {
 			if(wasOK){
 				debug('Issues report successfully sent to:', recipients.join(', '));
