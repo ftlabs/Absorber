@@ -21,7 +21,6 @@ const tmpPath = process.env.TMP_PATH || '/tmp';
 const durationAllowance = 5; // Number of  seconds the reported duration of a file is allowed to be innaccurate by.
 
 let poll = undefined;
-let problemReportSent = false;
 
 function shouldOverwrite(database, metadata){
 
@@ -330,18 +329,39 @@ function getDataFromURL(feedInfo){
 		})
 	;
 
-	const currentTime = new Date();
-	
-	// If it's between 13:00 and 13:10, and we have not sent a problem report
-	// and we have problems to report, do so.
-	if(currentTime.getHours() === 13 && currentTime.getMinutes() < 10 && problemReportSent === false && problems.list().length > 0){
-		problems.sendReport()
-			.then(sentSuccesfully => {
-				if(sentSuccesfully){
-					problemReportSent = true;
+	const currentProblems = problems.list();
+
+	if(currentProblems.length > 0){
+
+		const problemsToReport = currentProblems.map(problem => {
+				if(problems.check(problem) !== true){
+					return problem
+				} else {
+					return false;
 				}
 			})
+			.filter(problem => {
+				return problem !== false;
+			})
 		;
+			
+		problemsToReport.forEach(individualProblem => {
+				problems.report(individualProblem)
+					.then(result => {
+							if(result.wasSent){
+								debug(`Problem for ${individualProblem} has been reported`);
+							} else {
+								debug(`Problem for ${individualProblem} was not reported. Reason:`, result.reason);
+							}
+						})
+						.catch(err => {
+							debug(`An error occurred reporting an issue acquiring audio for ${individualProblem}`, err);
+						})
+					;
+				;
+			})
+		;
+
 	}
 
 }
