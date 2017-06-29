@@ -42,8 +42,6 @@ module.exports = function(feedURL){
 
 						thisItemUUID = itemUUID;
 
-						problems.remove(thisItemUUID);
-
 						return checkItemHasRequiredFields(item, process.env.REQUIRED_FEED_ITEMS.split(','))
 							.then(item => removeUnwantedFields(item, process.env.REQUIRED_FEED_ITEMS.split(',')))
 							.then(item => {

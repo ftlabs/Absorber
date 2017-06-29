@@ -3,13 +3,10 @@ const mailer = require('./mailer');
 
 const itemsWithIssues = {};
 const recipients = process.env.ISSUE_REPORT_RECIPIENTS.split(',') || [];
+const reportedItems = {};
 
 function addItemWithAProblemToList(key, reason = ''){
 	itemsWithIssues[key] = reason;
-}
-
-function removeItemWithProblemFromList(key){
-	delete itemsWithIssues[key]
 }
 
 function getASingleItemWithAProblemFromList(key){
@@ -20,35 +17,47 @@ function getASingleItemWithAProblemFromList(key){
 	}
 }
 
+function checkIfItemHasAlreadyBeenReported(key){
+	return reportedItems[key] === true;
+}
+
 function listAllItemsWithProblems(){
 	return Object.keys(itemsWithIssues);
 }
 
-function sendAReportToInterestedPartiesOfIssues(){
-
+function reportAnIssueToInterestedParties(key){
+	
 	if(recipients.length < 1){
-		return 'Unable to send report. There are no recipients to send the report to.';
+		return {
+			wasSent : false,
+			reason : `Unable to send report for ${key}. There are no recipients to send the report to.`
+		};
 	}
 
-	const intro = `This is an automated message from the FT Labs Audio Absorber. There are some issues with items that we've tried to absorb from our 3rd party providers...`
-	let listedIssues = '';
-	const outro = '\nPlease address these issues as soon as is convenient.';
+	if(reportedItems[key] !== undefined){
+		return {
+			wasSent : false,
+			reason : `Report has already been sent for ${key}. There are no recipients to send the report to.`
+		};
+	}
 
-	Object.keys(itemsWithIssues).forEach(key => {
-		listedIssues += '\n' + key + ': ' + itemsWithIssues[key];	
-	});
+	const intro = `This is an automated message from the FT Labs Audio Absorber. There is an issue with the audio for article ${key}.`
+	let listedIssues = `The issues are as follows: ${itemsWithIssues[key]}`;
+	const outro = 'Please address these issues as soon as is convenient.';
 
-	const combinedMessage = intro + listedIssues + outro;
+	const combinedMessage = `${intro} ${listedIssues} ${outro}`;
+	const combinedHTMLMessage = `<p>${intro}</p><p>${listedIssues}</p><p>${outro}</p>`;
 
 	return mailer.sendCustomMessage(
-		recipients,
-		'Issues with 3rd party audio acquisition', 
-		combinedMessage, 
-		combinedMessage
-	)
+			recipients,
+			'Issues with 3rd party audio acquisition', 
+			combinedMessage, 
+			combinedHTMLMessage
+		)
 		.then(wasOK => {
 			if(wasOK){
 				debug('Issues report successfully sent to:', recipients.join(', '));
+				reportedItems[key] = true;
 			}
 			return wasOK;
 		})
@@ -62,8 +71,8 @@ function sendAReportToInterestedPartiesOfIssues(){
 
 module.exports = {
 	add : addItemWithAProblemToList,
-	remove : removeItemWithProblemFromList,
 	get : getASingleItemWithAProblemFromList,
+	check : checkIfItemHasAlreadyBeenReported,
 	list : listAllItemsWithProblems,
-	sendReport : sendAReportToInterestedPartiesOfIssues
+	report : reportAnIssueToInterestedParties,
 };
