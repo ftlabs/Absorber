@@ -1,4 +1,3 @@
-
 function generatePlainTextForEmail(data){
 	return `
 This email is being sent to ${data.recipients.join(", ")}.

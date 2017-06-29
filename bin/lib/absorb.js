@@ -22,6 +22,8 @@ const durationAllowance = 5; // Number of  seconds the reported duration of a fi
 
 let poll = undefined;
 
+const absorbNotificationCopy = require('../copy/absorb-notification');
+
 function shouldOverwrite(database, metadata){
 
 	if(database === undefined || metadata === undefined){
@@ -149,20 +151,26 @@ function getDataFromURL(feedInfo){
 														debug(err);
 													}
 
-													/*{
+													const emailRecipients = process.env.MAIL_RECIPIENTS.split(',');
+
+													const data = {
+														recipients : emailRecipients,
 														itemUUID: itemUUID,
 														title: item['title'] || 'no title specified',
 														ftCopyUrl: generateS3PublicURL(itemUUID),
 														partnerCopyUrl: audioURL,
 														managementURL: managementURL,
 														provider : feedInfo.provider
-													}*/
+													};
 
 													if(process.env.NODE_ENV === 'production' && metadata['is-human'] === 'true' ){
 														debug('Production environment detected. Alerting FT to newly absorbed content.');
 														mail.sendCustomMessage(
-															process.env.MAIL_RECIPIENTS.split(','),
-															);
+															emailRecipients,
+															`Audio file retrieved from 3rd parties: ${item['title'] || 'no title specified'}`,
+															absorbNotificationCopy.plaintext(data),
+															absorbNotificationCopy.html(data)
+														);
 													} else {
 														debug(`Did not send email for piece. ENVIRONMENT: ${process.env.NODE_ENV} is-human: ${metadata['is-human']}`);
 													}

@@ -78,6 +78,5 @@ function sendCustomMessageToSpecifiedRecipients(recipients = [], subject, plainT
 }
 
 module.exports = {
-	send : sendMessage,
 	sendCustomMessage : sendCustomMessageToSpecifiedRecipients
 };
