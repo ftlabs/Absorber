@@ -45,8 +45,8 @@ function sendCustomMessageToSpecifiedRecipients(recipients = [], subject, plainT
 		    name:    from_email_name
 		},
 		subject:          subject,
-		htmlContent:      plainText,
-		plainTextContent: htmlContent
+		htmlContent:      htmlContent,
+		plainTextContent: plainText
 	};
 
 	return fetch(mail_post_url, {
