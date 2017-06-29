@@ -41,11 +41,11 @@ function reportAnIssueToInterestedParties(key){
 		};
 	}
 
-	const intro = `This is an automated message from the FT Labs Audio Absorber. There is an issue with the audio for article ${key}`
-	let listedIssues = `The issues are as follows: ${itemsWithIssues[key]}...`;
+	const intro = `This is an automated message from the FT Labs Audio Absorber. There is an issue with the audio for article ${key}.`
+	let listedIssues = `The issues are as follows: ${itemsWithIssues[key]}`;
 	const outro = 'Please address these issues as soon as is convenient.';
 
-	const combinedMessage = intro + listedIssues + outro;
+	const combinedMessage = `${intro} ${listedIssues} ${outro}`;
 	const combinedHTMLMessage = `<p>${intro}</p><p>${listedIssues}</p><p>${outro}</p>`;
 
 	return mailer.sendCustomMessage(
