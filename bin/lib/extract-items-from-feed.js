@@ -6,6 +6,7 @@ const parseRSSFeed = require('./parse-rss-feed');
 const separateQueryParams = require('./separate-query-parameters');
 const checkItemHasRequiredFields = require('./check-item-has-required-values');
 const removeUnwantedFields = require('./remove-unwanted-fields');
+const problems = require('./problem-items');
 
 function unpack(value){
 
@@ -40,6 +41,8 @@ module.exports = function(feedURL){
 						}
 
 						thisItemUUID = itemUUID;
+
+						problems.remove(thisItemUUID);
 
 						return checkItemHasRequiredFields(item, process.env.REQUIRED_FEED_ITEMS.split(','))
 							.then(item => removeUnwantedFields(item, process.env.REQUIRED_FEED_ITEMS.split(',')))
@@ -93,6 +96,7 @@ module.exports = function(feedURL){
 					})
 					.catch(err => {
 						debug(`An error occurred processing an item ${thisItemUUID} in the feed. Passing over...`, err);
+						problems.add(thisItemUUID, err);
 						return false;
 					})
 
