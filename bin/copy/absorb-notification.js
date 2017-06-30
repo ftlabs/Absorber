@@ -2,7 +2,7 @@ function generatePlainTextForEmail(data){
 	return `
 This email is being sent to ${data.recipients.join(", ")}.
 
-The Business Development team (Kayode Josiah) is running an experiment with 3rd parties providing human-voiced audio files of FT articles (chosen by FirstFT, Andrew Jack). 
+The Business Development team (Kayode Josiah) is running an experiment with 3rd parties providing human-voiced audio files of FT articles. 
 
 A new audio file has been retrieved from the 3rd party (${data.provider}).
 for article ${data.itemUUID},
@@ -26,7 +26,7 @@ function generateHTMLForEmail(data){
 This email is being sent to ${data.recipients.join(", ")}.
 </p>
 <p>
-The Business Development team (Kayode Josiah) is running an experiment with 3rd parties providing human-voiced audio files of FT articles (chosen by FirstFT, Andrew Jack). 
+The Business Development team (Kayode Josiah) is running an experiment with 3rd parties providing human-voiced audio files of FT articles.
 </p>
 <p>
 A new audio file has been retrieved from the 3rd party (${data.provider}).
