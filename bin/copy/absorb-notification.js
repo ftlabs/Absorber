@@ -26,7 +26,11 @@ function generateHTMLForEmail(data){
 This email is being sent to ${data.recipients.join(", ")}.
 </p>
 <p>
+<<<<<<< HEAD
 The Business Development team (Kayode Josiah) is running an experiment with 3rd parties providing human-voiced audio files of FT articles. 
+=======
+The Business Development team (Kayode Josiah) is running an experiment with 3rd parties providing human-voiced audio files of FT articles.
+>>>>>>> 9a03722cd895a386e2755e141dd88494c7f30876
 </p>
 <p>
 A new audio file has been retrieved from the 3rd party (${data.provider}).
