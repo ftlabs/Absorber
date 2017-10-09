@@ -4,13 +4,13 @@ It uses RSS feeds to find audio versions of FT articles.
 ## Description
 
 ### In short...
-The absorber reads RSS feeds from 3rd party providers of audio versions of the FT. 
+The absorber reads RSS feeds from 3rd party providers of audio versions of the FT.
 
 A check is run every two minutes.
 
 For each item in the RSS feed, the absorber checks for a copy of the audio file (and an OGG version of it) in an S3 bucket, and for metadata associated with that file in a DynamoDB table.
 
-If no file is found in the S3 bucket, a copy will be retrieved from the source the RSS feed points to, convert it to an OGG version and then upload both the source file and the OGG to the S3 bucket. 
+If no file is found in the S3 bucket, a copy will be retrieved from the source the RSS feed points to, convert it to an OGG version and then upload both the source file and the OGG to the S3 bucket.
 
 Any metadata contained in the RSS for the file (as query parameters on the audio file URL) will be stored in the DynamoDB table.
 
@@ -60,7 +60,7 @@ Example JSON
 
 The `provider` value is the shortname that will be used to identify providers in the DynamoDB tables. The `provider_name` value is how you wish the 3rd party's name to be displayed on client-side applications.
 
-The type can be either `rss` for a standard RSS feed, or `itunes` for and iTunes XML feed. 
+The type can be either `rss` for a standard RSS feed, or `itunes` for and iTunes XML feed.
 
 #### AWS_AUDIO_BUCKET
 
@@ -106,13 +106,17 @@ The type can be either `rss` for a standard RSS feed, or `itunes` for and iTunes
 
 #### MAIL_POST_URL
 
+#### MAIL_REPLYTO_SUBDOMAIN
+
+#### MAIL_REPLYTO_PREFIX
+
 #### ADMIN_URL
 
 - An absolute URL for the FT Labs Ingestion dashboard that displays the state of audio on the FT.
 
 #### DEBUG_FFMPEG
 
-- Boolean value. `true` if you want the stderr/stdout of the FFMPEG jobs logged to the console. 
+- Boolean value. `true` if you want the stderr/stdout of the FFMPEG jobs logged to the console.
 
 #### REQUIRED_METADATA_PARAMETERS
 - A comma-separated list of keys that RSS feed item must expose to the absorber to be considered valid.
