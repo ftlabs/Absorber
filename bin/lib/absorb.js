@@ -52,14 +52,15 @@ function shouldOverwrite(database, metadata){
 }
 
 function getDataFromURL(feedInfo){
-	
+
 	debug('Known problems:', problems.list());
 	debug(feedInfo);
 
 	extractItemsFromFeed(feedInfo.url)
 		.then(itemInformation => {
+			console.log('getDataFromURL: extractItemsFromFeed: feedInfo.url=', feedInfo.url, ', num items=', itemInformation.length);
 			itemInformation.forEach(datum => {
-				debug(datum);
+				debug('getDataFromURL: extractItemsFromFeed: datum=', datum);
 				const item = datum.item;
 				const metadata = datum.metadata;
 				const audioURL = datum.audioURL;
@@ -76,11 +77,11 @@ function getDataFromURL(feedInfo){
 
 						database.read({ uuid : itemUUID }, process.env.AWS_METADATA_TABLE)
 							.then(databaseItem => {
-								
+
 								databaseItem = databaseItem.Item;
 
 								if(databaseItem === undefined || shouldOverwrite(databaseItem, metadata)){
-									
+
 									debug(`Item ${itemUUID} has no metadata in database. Adding...`, tableData);
 
 									if(databaseItem !== undefined){
@@ -91,7 +92,7 @@ function getDataFromURL(feedInfo){
 
 										purgeAvailabilityCache(itemUUID)
 											.catch(err => {
-												debug(err);
+												console.log('getDataFromURL: purgeAvailabilityCache: err=', err);
 											})
 										;
 
@@ -102,23 +103,23 @@ function getDataFromURL(feedInfo){
 											debug(`Item ${itemUUID} in DynamoDB`, tableData);
 										})
 										.catch(err => {
-											debug("An error occurred when writing audio meta data to the metadata table.", err, tableData);
+											console.log("getDataFromURL: An error occurred when writing audio meta data to the metadata table.", err, tableData);
 										})
 									;
 
 								} else {
 									debug(`Database already has metadata for item ${itemUUID}`);
 								}
-							
+
 								S3.headObject({
 									Bucket : process.env.AWS_AUDIO_BUCKET,
 									Key : `${itemUUID}.mp3`
-								}, function (err) { 
-									
+								}, function (err) {
+
 									if ( (err && err.code === 'NotFound') || shouldOverwrite(databaseItem, metadata) ){
 										// We don't have that audio file (or we want to overwrite it), so let's grab it.
 										debug(`Writing .mp3 version of ${itemUUID} to S3 from ${item.link}.`)
-										
+
 										debug(item);
 
 										getDurationOfFile(audioURL)
@@ -128,7 +129,7 @@ function getDataFromURL(feedInfo){
 													tableData.duration = duration;
 													database.write(tableData, process.env.AWS_METADATA_TABLE)
 														.catch(err => {
-															debug(`Failed to overwrite duration of ${itemUUID}`, err);
+															console.log(`getDurationOfFile: Failed to overwrite duration of ${itemUUID}: err=`, err);
 														})
 													;
 
@@ -148,7 +149,7 @@ function getDataFromURL(feedInfo){
 													ACL : 'public-read'
 												}, function(err){
 													if(err){
-														debug(err);
+														console.log('fetch audioURL: err=', err);
 													}
 
 													const emailRecipients = process.env.MAIL_RECIPIENTS.split(',');
@@ -164,7 +165,7 @@ function getDataFromURL(feedInfo){
 													};
 
 													if(process.env.NODE_ENV === 'production' && metadata['is-human'] === 'true' ){
-														debug('Production environment detected. Alerting FT to newly absorbed content.');
+														console.log('Production environment detected. Alerting FT to newly absorbed content.');
 														mail.sendCustomMessage(
 															emailRecipients,
 															`Audio file retrieved from 3rd parties: ${item['title'] || 'no title specified'}`,
@@ -178,7 +179,7 @@ function getDataFromURL(feedInfo){
 													if(process.env.NODE_ENV !== 'development'){
 														purgeAvailabilityCache(itemUUID)
 															.catch(err => {
-																debug(err);
+																console.log('fetch: purgeAvailabilityCache: err=', err);
 															})
 														;
 													}
@@ -190,12 +191,12 @@ function getDataFromURL(feedInfo){
 												})
 											})
 											.catch(err => {
-												debug(err);
+												console.log('fetch: err=', err);
 											})
 										;
 
 									} else if(err){
-										debug(`An error occurred querying the S3 bucket for ${itemUUID}.mp3`, err);
+										console.log(`An error occurred querying the S3 bucket for ${itemUUID}.mp3`, err);
 									} else {
 										debug(`The MP3 version of ${itemUUID} is already in the S3 bucket`);
 									}
@@ -242,7 +243,7 @@ function getDataFromURL(feedInfo){
 													});
 												})
 												.then(conversionDestination => {
-													
+
 													debug(`${itemUUID} has been converted to OGG and can be found at ${conversionDestination}`);
 													debug(`Writing ${itemUUID}.ogg to S3`);
 
@@ -254,29 +255,29 @@ function getDataFromURL(feedInfo){
 															Body : data,
 															ACL : 'public-read'
 														},function(err){
-															
+
 															if(err){
 																debug(err);
 															} else {
 																debug(`${itemUUID}.ogg successfully uploaded to ${process.env.AWS_AUDIO_BUCKET}`);
 																fs.unlink(conversionDestination, err => {
 																	if(err){
-																		debug(`Unable to delete ${conversionDestination} from file system`, err);
+																		console.log(`Unable to delete ${conversionDestination} from file system`, err);
 																	}
 																});
 																fs.unlink(localDestination, err => {
 																	if(err){
-																		debug(`Unable to delete ${localDestination} from file system`, err);
+																		console.log(`Unable to delete ${localDestination} from file system`, err);
 																	}
 																});
 																if(process.env.NODE_ENV !== 'development'){
 
 																	purgeAvailabilityCache(itemUUID)
 																		.catch(err => {
-																			debug(err);
+																			console.log('purgeAvailabilityCache: err=', err);
 																		})
 																	;
-																
+
 																}
 
 																audit({
@@ -294,15 +295,15 @@ function getDataFromURL(feedInfo){
 
 												})
 												.catch(err => {
-													debug(`An error occurred when we tried to convert ${itemUUID}.mp3 to OGG and upload it to S3`, err);
+													console.log(`An error occurred when we tried to convert ${itemUUID}.mp3 to OGG and upload it to S3`, err);
 													fs.unlink(localDestination, err => {
 														if(err){
-															debug(`Unable to delete ${localDestination} for file system`, err);
+															console.log(`Unable to delete ${localDestination} for file system`, err);
 														}
 													});
 													fs.unlink(`${tmpPath}/${itemUUID}.ogg`, err => {
 														if(err){
-															debug(`Unable to delete ${tmpPath}/${itemUUID}.ogg from file system`, err);
+															console.log(`Unable to delete ${tmpPath}/${itemUUID}.ogg from file system`, err);
 														}
 													});
 												})
@@ -313,7 +314,7 @@ function getDataFromURL(feedInfo){
 										}
 
 									} else if(err){
-										debug(`An error occurred querying the S3 bucket for ${itemUUID}.ogg`, err);
+										console.log(`An error occurred querying the S3 bucket for ${itemUUID}.ogg`, err);
 									} else {
 										debug(`The OGG version of ${itemUUID} is already in the S3 bucket`);
 									}
@@ -325,15 +326,15 @@ function getDataFromURL(feedInfo){
 
 					})
 					.catch(err => {
-						debug('Error checking file size', err);
+						console.log('Error checking file size', err);
 					})
 				;
 
 			});
-			
+
 		})
 		.catch(err => {
-			debug(`An error occured trying to parse the feed from ${feedInfo.url}:`, '\n\terr:', err);
+			console.log(`An error occured trying to parse the feed from ${feedInfo.url}:`, '\n\terr:', err);
 		})
 	;
 
@@ -352,18 +353,18 @@ function getDataFromURL(feedInfo){
 				return problem !== false;
 			})
 		;
-			
+
 		problemsToReport.forEach(individualProblem => {
 				problems.report(individualProblem)
 					.then(result => {
 							if(result.wasSent){
-								debug(`Problem for ${individualProblem} has been reported`);
+								console.log(`Problem for ${individualProblem} has been reported`);
 							} else {
-								debug(`Problem for ${individualProblem} was not reported. Reason:`, result.reason);
+								console.log(`Problem for ${individualProblem} was not reported. Reason:`, result.reason);
 							}
 						})
 						.catch(err => {
-							debug(`An error occurred reporting an issue acquiring audio for ${individualProblem}`, err);
+							console.log(`An error occurred reporting an issue acquiring audio for ${individualProblem}`, err);
 						})
 					;
 				;
@@ -393,19 +394,19 @@ function startPolling(interval, now){
 	now = now || false;
 
 	if(process.env.AUDIO_RSS_ENDPOINTS === undefined){
-		debug("AUDIO_RSS_ENDPOINTS environment variable is undefined. Will not poll.");
+		console.log("AUDIO_RSS_ENDPOINTS environment variable is undefined. Will not poll.");
 		return false;
 	}
 
 	try{
 		JSON.parse(process.env.AUDIO_RSS_ENDPOINTS).data;
 	} catch(err){
-		debug("Could not parse AUDIO_RSS_ENDPOINTS environment variable as JSON. Will not poll.");
+		console.log("Could not parse AUDIO_RSS_ENDPOINTS environment variable as JSON. Will not poll.");
 		return;
 	}
 
 	if(process.env.AWS_AUDIO_BUCKET === undefined){
-		debug('AWS_AUDIO_BUCKET environment variable is not defined. Will not poll.');
+		console.log('AWS_AUDIO_BUCKET environment variable is not defined. Will not poll.');
 		return false;
 	}
 

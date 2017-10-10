@@ -19,7 +19,7 @@ function unpack(value){
 }
 
 module.exports = function(feedURL){
-	
+
 	return fetch(feedURL)
 		.then(res => res.text())
 		.then(text => parseRSSFeed(text))
@@ -48,7 +48,7 @@ module.exports = function(feedURL){
 
 								const audioURL = item.enclosure !== undefined ? item.enclosure[0]['$'].url : item.link[0];
 								const metadata = separateQueryParams(audioURL);
-								
+
 								return checkItemHasRequiredFields(metadata, process.env.REQUIRED_METADATA_PARAMETERS.split(','))
 									.then(metadata => removeUnwantedFields(metadata, process.env.REQUIRED_METADATA_PARAMETERS.split(',')))
 									.then(metadata => {
@@ -72,7 +72,7 @@ module.exports = function(feedURL){
 										tableEntry['is-human'] = metadata['is-human'];
 
 										if(tableEntry.description === ''){
-											debug(`'description' is blank. Removing from tableData`);
+											console.log(`'description' is blank. Removing from tableData`);
 											delete tableEntry.description;
 										}
 
@@ -90,16 +90,16 @@ module.exports = function(feedURL){
 							})
 
 						;
-	
+
 					})
 					.catch(err => {
-						debug(`An error occurred processing an item ${thisItemUUID} in the feed. Passing over...`, err);
+						console.log(`An error occurred processing an item ${thisItemUUID} in the feed. Passing over...`, err);
 						problems.add(thisItemUUID, err);
 						return false;
 					})
 
 				;
-				
+
 			});
 
 			return Promise.all(P)

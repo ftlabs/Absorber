@@ -76,7 +76,7 @@ function sendCustomMessageToSpecifiedRecipients(recipients = [], subject, plainT
 			return true;
 		})
 		.catch(err => {
-			debug('An error occurred sending a custom email', err);
+			console.log('An error occurred sending a custom email', err);
 			return false;
 		})
 	;

@@ -13,7 +13,7 @@ module.exports = function(audioURL){
 	const localDestination = `${tmpPath}/${tmpID}`;
 
 	return fetch(audioURL)
-		.then(res => {	
+		.then(res => {
 			const fsStream = fs.createWriteStream(localDestination);
 			debug(`Writing file ${tmpID} to ${localDestination} for probing...`);
 
@@ -30,7 +30,7 @@ module.exports = function(audioURL){
 
 		})
 		.then(filePath => {
-			
+
 			return new Promise( (resolve, reject) => {
 
 					ffprobe(filePath, function(err, data){
@@ -50,8 +50,7 @@ module.exports = function(audioURL){
 
 		})
 		.catch(err => {
-			debug('>>>> FFPROBE ERROR <<<<');
-			debug(err);
+			console.log('>>>> FFPROBE ERROR <<<<: err=', err);
 			throw err;
 		})
 	;
