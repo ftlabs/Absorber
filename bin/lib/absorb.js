@@ -58,7 +58,7 @@ function getDataFromURL(feedInfo){
 
 	extractItemsFromFeed(feedInfo.url)
 		.then(itemInformation => {
-			console.log('getDataFromURL: extractItemsFromFeed: feedInfo.url=', feedInfo.url, ', num items=', itemInformation.length);
+			console.log(`getDataFromURL: extractItemsFromFeed: feedInfo.url=${feedInfo.url}, num items= ${itemInformation.length}`);
 			itemInformation.forEach(datum => {
 				debug('getDataFromURL: extractItemsFromFeed: datum=', datum);
 				const item = datum.item;
@@ -92,7 +92,7 @@ function getDataFromURL(feedInfo){
 
 										purgeAvailabilityCache(itemUUID)
 											.catch(err => {
-												console.log('getDataFromURL: purgeAvailabilityCache: err=', err);
+												console.log(`getDataFromURL: purgeAvailabilityCache: err= ${err}`);
 											})
 										;
 
@@ -103,7 +103,7 @@ function getDataFromURL(feedInfo){
 											debug(`Item ${itemUUID} in DynamoDB`, tableData);
 										})
 										.catch(err => {
-											console.log("getDataFromURL: An error occurred when writing audio meta data to the metadata table.", err, tableData);
+											console.log(`getDataFromURL: An error occurred when writing audio meta data to the metadata table. ${err} ${tableData}`);
 										})
 									;
 
@@ -127,9 +127,9 @@ function getDataFromURL(feedInfo){
 												if(duration - tableData.duration < -durationAllowance || duration - tableData.duration > durationAllowance){
 													debug(`Reported duration of file ${audioURL} is incorrect. Updating database Entry`);
 													tableData.duration = duration;
-													database.write(tableData, process.env.AWS_METADATA_TABLE)
+													database.write(tableData, process.env.AWS_METADATA_TABLE);
 														.catch(err => {
-															console.log(`getDurationOfFile: Failed to overwrite duration of ${itemUUID}: err=`, err);
+															console.log(`getDurationOfFile: Failed to overwrite duration of ${itemUUID}: err= ${err}`);
 														})
 													;
 
@@ -149,7 +149,7 @@ function getDataFromURL(feedInfo){
 													ACL : 'public-read'
 												}, function(err){
 													if(err){
-														console.log('fetch audioURL: err=', err);
+														console.log(`fetch audioURL: err= ${err}`);
 													}
 
 													const emailRecipients = process.env.MAIL_RECIPIENTS.split(',');
@@ -179,7 +179,7 @@ function getDataFromURL(feedInfo){
 													if(process.env.NODE_ENV !== 'development'){
 														purgeAvailabilityCache(itemUUID)
 															.catch(err => {
-																console.log('fetch: purgeAvailabilityCache: err=', err);
+																console.log(`fetch: purgeAvailabilityCache: err= ${err}`);
 															})
 														;
 													}
@@ -191,12 +191,12 @@ function getDataFromURL(feedInfo){
 												})
 											})
 											.catch(err => {
-												console.log('fetch: err=', err);
+												console.log(`fetch: err= ${err}`);
 											})
 										;
 
 									} else if(err){
-										console.log(`An error occurred querying the S3 bucket for ${itemUUID}.mp3`, err);
+										console.log(`An error occurred querying the S3 bucket for ${itemUUID}.mp3 ${err}`);
 									} else {
 										debug(`The MP3 version of ${itemUUID} is already in the S3 bucket`);
 									}
@@ -262,19 +262,19 @@ function getDataFromURL(feedInfo){
 																debug(`${itemUUID}.ogg successfully uploaded to ${process.env.AWS_AUDIO_BUCKET}`);
 																fs.unlink(conversionDestination, err => {
 																	if(err){
-																		console.log(`Unable to delete ${conversionDestination} from file system`, err);
+																		console.log(`Unable to delete ${conversionDestination} from file system ${err}`);
 																	}
 																});
 																fs.unlink(localDestination, err => {
 																	if(err){
-																		console.log(`Unable to delete ${localDestination} from file system`, err);
+																		console.log(`Unable to delete ${localDestination} from file system ${err}`);
 																	}
 																});
 																if(process.env.NODE_ENV !== 'development'){
 
 																	purgeAvailabilityCache(itemUUID)
 																		.catch(err => {
-																			console.log('purgeAvailabilityCache: err=', err);
+																			console.log(`purgeAvailabilityCache: err= ${err}`);
 																		})
 																	;
 
@@ -295,15 +295,15 @@ function getDataFromURL(feedInfo){
 
 												})
 												.catch(err => {
-													console.log(`An error occurred when we tried to convert ${itemUUID}.mp3 to OGG and upload it to S3`, err);
+													console.log(`An error occurred when we tried to convert ${itemUUID}.mp3 to OGG and upload it to S3 ${err}`);
 													fs.unlink(localDestination, err => {
 														if(err){
-															console.log(`Unable to delete ${localDestination} for file system`, err);
+															console.log(`Unable to delete ${localDestination} for file system ${err}`);
 														}
 													});
 													fs.unlink(`${tmpPath}/${itemUUID}.ogg`, err => {
 														if(err){
-															console.log(`Unable to delete ${tmpPath}/${itemUUID}.ogg from file system`, err);
+															console.log(`Unable to delete ${tmpPath}/${itemUUID}.ogg from file system ${err}`);
 														}
 													});
 												})
@@ -314,7 +314,7 @@ function getDataFromURL(feedInfo){
 										}
 
 									} else if(err){
-										console.log(`An error occurred querying the S3 bucket for ${itemUUID}.ogg`, err);
+										console.log(`An error occurred querying the S3 bucket for ${itemUUID}.ogg ${err}`);
 									} else {
 										debug(`The OGG version of ${itemUUID} is already in the S3 bucket`);
 									}
@@ -326,7 +326,7 @@ function getDataFromURL(feedInfo){
 
 					})
 					.catch(err => {
-						console.log('Error checking file size', err);
+						console.log(`Error checking file size ${err}`);
 					})
 				;
 
@@ -360,11 +360,11 @@ function getDataFromURL(feedInfo){
 							if(result.wasSent){
 								console.log(`Problem for ${individualProblem} has been reported`);
 							} else {
-								console.log(`Problem for ${individualProblem} was not reported. Reason:`, result.reason);
+								console.log(`Problem for ${individualProblem} was not reported. Reason: ${result.reason}`);
 							}
 						})
 						.catch(err => {
-							console.log(`An error occurred reporting an issue acquiring audio for ${individualProblem}`, err);
+							console.log(`An error occurred reporting an issue acquiring audio for ${individualProblem} ${err}`);
 						})
 					;
 				;
@@ -394,14 +394,14 @@ function startPolling(interval, now){
 	now = now || false;
 
 	if(process.env.AUDIO_RSS_ENDPOINTS === undefined){
-		console.log("AUDIO_RSS_ENDPOINTS environment variable is undefined. Will not poll.");
+		console.log('AUDIO_RSS_ENDPOINTS environment variable is undefined. Will not poll.');
 		return false;
 	}
 
 	try{
 		JSON.parse(process.env.AUDIO_RSS_ENDPOINTS).data;
 	} catch(err){
-		console.log("Could not parse AUDIO_RSS_ENDPOINTS environment variable as JSON. Will not poll.");
+		console.log('Could not parse AUDIO_RSS_ENDPOINTS environment variable as JSON. Will not poll.');
 		return;
 	}
 

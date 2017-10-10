@@ -56,13 +56,13 @@ function reportAnIssueToInterestedParties(key){
 		)
 		.then(wasOK => {
 			if(wasOK){
-				console.log('Issues report successfully sent to:', recipients.join(', '));
+				console.log(`Issues report successfully sent to: ${recipients.join(', ')}`);
 				reportedItems[key] = true;
 			}
 			return wasOK;
 		})
 		.catch(err => {
-			console.log('An error occurred trying to send an issues report to', recipients.join(', '), err);
+			console.log(`An error occurred trying to send an issues report to ${recipients.join(', ')} ${err}`);
 			return false;
 		})
 	;

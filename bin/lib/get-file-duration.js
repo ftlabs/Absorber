@@ -50,7 +50,7 @@ module.exports = function(audioURL){
 
 		})
 		.catch(err => {
-			console.log('>>>> FFPROBE ERROR <<<<: err=', err);
+			console.log(`>>>> FFPROBE ERROR <<<<: err= ${err}`);
 			throw err;
 		})
 	;

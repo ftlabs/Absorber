@@ -93,7 +93,7 @@ module.exports = function(feedURL){
 
 					})
 					.catch(err => {
-						console.log(`An error occurred processing an item ${thisItemUUID} in the feed. Passing over...`, err);
+						console.log(`An error occurred processing an item ${thisItemUUID} in the feed. Passing over... ${err}`);
 						problems.add(thisItemUUID, err);
 						return false;
 					})
