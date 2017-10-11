@@ -127,7 +127,7 @@ function getDataFromURL(feedInfo){
 												if(duration - tableData.duration < -durationAllowance || duration - tableData.duration > durationAllowance){
 													debug(`Reported duration of file ${audioURL} is incorrect. Updating database Entry`);
 													tableData.duration = duration;
-													database.write(tableData, process.env.AWS_METADATA_TABLE);
+													database.write(tableData, process.env.AWS_METADATA_TABLE)
 														.catch(err => {
 															console.log(`getDurationOfFile: Failed to overwrite duration of ${itemUUID}: err= ${err}`);
 														})
