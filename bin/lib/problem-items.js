@@ -26,7 +26,7 @@ function listAllItemsWithProblems(){
 }
 
 function reportAnIssueToInterestedParties(key){
-	
+
 	if(recipients.length < 1){
 		return {
 			wasSent : false,
@@ -50,19 +50,19 @@ function reportAnIssueToInterestedParties(key){
 
 	return mailer.sendCustomMessage(
 			recipients,
-			'Issues with 3rd party audio acquisition', 
-			combinedMessage, 
+			'Issues with 3rd party audio acquisition',
+			combinedMessage,
 			combinedHTMLMessage
 		)
 		.then(wasOK => {
 			if(wasOK){
-				debug('Issues report successfully sent to:', recipients.join(', '));
+				console.log(`Issues report successfully sent to: ${recipients.join(', ')}`);
 				reportedItems[key] = true;
 			}
 			return wasOK;
 		})
 		.catch(err => {
-			debug('An error occurred trying to send an issues report to', recipients.join(', '), err);
+			console.log(`An error occurred trying to send an issues report to ${recipients.join(', ')} ${err}`);
 			return false;
 		})
 	;

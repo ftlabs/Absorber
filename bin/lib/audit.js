@@ -10,7 +10,7 @@ module.exports = function(data){
 
 	database.write(data, process.env.AWS_AUDIT_TABLE)
 		.catch(err => {
-			debug("An error occurred when adding to the audit database", err, data);
+			console.log(`An error occurred when adding to the audit database ${err}, ${data}`);
 		})
 	;
 

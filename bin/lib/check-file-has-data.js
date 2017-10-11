@@ -36,7 +36,7 @@ module.exports = function(fileURL){
 				try {
 					req.abort();
 				} catch(err){
-					debug('REQUEST ABORT FAILED', err);
+					console.log(`REQUEST ABORT FAILED ${err}`);
 				}
 				reject(err);
 			})

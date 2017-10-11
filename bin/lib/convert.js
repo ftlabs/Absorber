@@ -14,7 +14,7 @@ function checkJobExistsForFile(id){
 }
 
 function convert(details, args, resolve, reject){
-	
+
 	debug(`Beginning conversion of ${details.name} to OGG. It will be written to: ${details.outputDestination}`);
 
 	const process = spawn(ffmpeg.path, args);
@@ -22,20 +22,20 @@ function convert(details, args, resolve, reject){
 	if(debugFFMPEG === true){
 
 		process.stdout.on('data', (data) => {
-			debug(`stdout: ${data}`);
+			console.log(`convert: stdout: ${data}`);
 		});
 
 		process.stderr.on('data', (data) => {
-			debug(`stderr: ${data}`);
+			console.log(`convert: stderr: ${data}`);
 		});
-		
+
 	}
 
 	process.on('close', (code) => {
 
 		currentJobs -= 1;
 		if(code === 1){
-			debug(`FFMPEG exited with status code 1 while converting ${details.filePath} to OGG`);
+			console.log(`FFMPEG exited with status code 1 while converting ${details.filePath} to OGG`);
 			reject();
 		} else if(code === 0){
 			debug('FFMPEG closed and was happy');
@@ -58,7 +58,7 @@ function convertAudioFileToOgg(details){
 		'-q:a',
 		'4',
 		outputDestination
-	];	
+	];
 
 	details.outputDestination = outputDestination;
 
@@ -80,7 +80,7 @@ setInterval(function(){
 			const newJob = jobs.shift();
 			convert(newJob.details, newJob.args, newJob.resolve, newJob.reject)
 			debug(`There are now ${currentJobs} jobs running`);
-		
+
 		}
 
 	}

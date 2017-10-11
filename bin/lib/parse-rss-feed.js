@@ -13,8 +13,8 @@ module.exports = function(text){
 				if(result !== null){
 					resolve(result.rss);
 				} else {
-					debug('Parsing of RSS did not complete as expected. TEXT:', text, 'RESULT:', JSON.stringify(result), 'ERR:', JSON.stringify(err) );
-					reject();	
+					console.log(`Parsing of RSS did not complete as expected. TEXT: ${text} RESULT: ${JSON.stringify(result)} ERR: ${JSON.stringify(err)}`);
+					reject();
 				}
 
 			}
