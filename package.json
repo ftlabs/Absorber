@@ -22,7 +22,7 @@
   "homepage": "https://github.com/ftlabs/Absorber#readme",
   "dependencies": {
     "assert": "^1.4.1",
-    "aws-sdk": "^2.375.0",
+    "aws-sdk": "^2.814.0",
     "debug": "^2.3.3",
     "dotenv": "^2.0.0",
     "express": "^4.14.0",
